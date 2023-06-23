@@ -17,8 +17,8 @@ export default function SettingsScreen({ isDarkMode, setIsDarkMode }) {
                 <Switch
                     value={isDarkMode}
                     onValueChange={value => setIsDarkMode(value)}
-                    thumbColor={isDarkMode ? '#FF0000' : '#FF0000'} // Red when dark mode, white when light mode
-                    trackColor={{ false: '#FF0000', true: '#FFFFFF' }} // White when off, red when on
+                    thumbColor={isDarkMode ? '#FF2D55FF' : '#FF2D55FF'} // Red when dark mode, white when light mode
+                    trackColor={{ false: '#FF2D55FF', true: '#FFFFFF' }} // White when off, red when on
                 />
             </View>
             {/* StatusBar component with dynamic style */}

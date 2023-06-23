@@ -18,7 +18,7 @@ export default function OverviewScreen({jsonData, isDarkMode}) {
     );
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, isDarkMode && styles.darkContainer]}>
             {/* StatusBar component */}
             <StatusBar style="auto"/>
             <FlatList
@@ -38,6 +38,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#fff",
+    },
+    darkContainer: {
+        backgroundColor: "#000",
     },
     darkListItem: {
         borderBottomColor: "#000", // Color of the bottom border in dark mode
