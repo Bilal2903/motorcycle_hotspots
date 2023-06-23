@@ -5,6 +5,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Provider as PaperProvider} from 'react-native-paper';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import HomeScreen from './Home';
 import MapsScreen from './Maps';
 import SettingsScreen from './Settings';
@@ -46,6 +47,17 @@ const darkTheme = {
 export default function App() {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [jsonData, setJsonData] = useState([]);
+
+    // Functie om de header titel te krijgen op basis van de route
+    function getHeaderTitle(route) {
+        const routeName = getFocusedRouteNameFromRoute(route);
+
+        if (routeName === 'Details') {
+            return 'Details'; // Als de huidige route 'Details' is, retourneer 'Details' als de titel
+        } else {
+            return 'Maps'; // Anders retourneer 'Maps' als de titel
+        }
+    }
 
     // Function to get information about motorcycle stores
     const fetchData = async () => {
@@ -99,28 +111,37 @@ export default function App() {
                     </Tab.Screen>
 
                     {/* Maps Screen */}
-                    <Tab.Screen name="Maps">
-                        {/*Additional Stack Navigator Example*/}
+                    <Tab.Screen
+                        name="Maps"
+                        options={({ route }) => ({
+                            title: getHeaderTitle(route), // Dynamically set the title based on the current route
+                            tabBarStyle: {
+                                display: route.name === 'Details' ? 'none' : 'flex',
+                            },
+                            headerShown: false,
+                        })}
+                    >
                         {(props) => (
-                            <Stack.Navigator initialRouteName="Map">
-                                {/*Map screen*/}
-                                <Stack.Screen name={"Map"} options={{
-                                    tabBarStyle: {display: "none"},
-                                    headerShown: false,
-                                    tabBarShowLabel: false
-                                }}>
-                                    {/* Show the Maps screen and give it information about motorcycle stores */}
-                                    {(props) => <MapsScreen {...props} jsonData={jsonData.motorcycleStores}
-                                                            screenProps={{isDarkMode}}/>}
+                            <Stack.Navigator initialRouteName="Maps">
+                                <Stack.Screen
+                                    name="Maps"
+                                    options={{
+                                        headerShown: true,
+                                    }}
+                                >
+                                    {(props) => (
+                                        <MapsScreen {...props} jsonData={jsonData.motorcycleStores} screenProps={{ isDarkMode }} />
+                                    )}
                                 </Stack.Screen>
                                 <Stack.Screen
                                     name="Details"
                                     component={DetailScreen}
-                                    initialParams={{isDarkMode}} // Pass the isDarkMode prop to DetailScreen
+                                    initialParams={{ isDarkMode }}
                                 />
                             </Stack.Navigator>
                         )}
                     </Tab.Screen>
+
                     {/* Overview Screen */}
                     <Tab.Screen name="Overview">
                         {/* Show the Overview screen and give it information about motorcycle stores */}
