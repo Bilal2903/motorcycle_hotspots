@@ -1,25 +1,26 @@
 import 'react-native-gesture-handler';
-import React, {useEffect, useState} from 'react';
-import {NavigationContainer, DefaultTheme, DarkTheme} from '@react-navigation/native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {createStackNavigator} from '@react-navigation/stack';
+import React, { useEffect, useState } from 'react';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {Provider as PaperProvider} from 'react-native-paper';
+import { Provider as PaperProvider } from 'react-native-paper';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import HomeScreen from './Home';
 import MapsScreen from './Maps';
 import SettingsScreen from './Settings';
-import OverviewScreen from "./Overview";
 import DetailScreen from './Details';
+import FavoritesScreen from "./Favorites";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
+// Light theme colors customization
 const lightTheme = {
     ...DefaultTheme,
     colors: {
         ...DefaultTheme.colors,
-        // Pas de kleuren aan naar jouw voorkeur
         primary: 'rgb(255, 45, 85)',
         background: 'rgb(242, 242, 242)',
         card: 'rgb(255, 255, 255)',
@@ -29,11 +30,11 @@ const lightTheme = {
     },
 };
 
+// Dark theme colors customization
 const darkTheme = {
     ...DarkTheme,
     colors: {
         ...DarkTheme.colors,
-        // Pas de kleuren aan naar jouw voorkeur
         primary: 'rgb(255, 45, 85)',
         background: 'rgb(28, 28, 30)',
         card: 'rgb(44, 44, 46)',
@@ -43,27 +44,61 @@ const darkTheme = {
     },
 };
 
+// Mapping of tab names to icon names
+const tabIconMappings = {
+    Home: 'home',
+    Maps: 'map',
+    Overview: 'list',
+    Settings: 'cog',
+    Favorites: 'star',
+};
 
 export default function App() {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [jsonData, setJsonData] = useState([]);
+    const [favorites, setFavorites] = useState([]);
 
-    // Functie om de header titel te krijgen op basis van de route
+    // Function to retrieve favorites from AsyncStorage
+    const getFavorites = async () => {
+        try {
+            // Retrieve stored favorites from AsyncStorage
+            const storedData = await AsyncStorage.getItem('favorites');
+            if (storedData !== null) {
+                // If favorites exist, update the favorites state with the stored favorites
+                setFavorites(JSON.parse(storedData));
+            }
+        } catch (error) {
+            console.log('Error retrieving data:', error);
+        }
+    };
+
+    useEffect(() => {
+        // Call the getFavorites function when the component mounts
+        getFavorites();
+    }, []);
+
+    // Function to update favorites state
+    const updateFavorites = (newFavorites) => {
+        setFavorites(newFavorites);
+    };
+
+    // Function to get the header title based on the focused route
     function getHeaderTitle(route) {
         const routeName = getFocusedRouteNameFromRoute(route);
-
         if (routeName === 'Details') {
-            return 'Details'; // Als de huidige route 'Details' is, retourneer 'Details' als de titel
+            return 'Details';
         } else {
-            return 'Maps'; // Anders retourneer 'Maps' als de titel
+            return 'Maps';
         }
     }
 
-    // Function to get information about motorcycle stores
+    // Function to fetch data from the API
     const fetchData = async () => {
         try {
+            // Fetch data from the API
             const response = await fetch('https://stud.hosted.hr.nl/1032518/Prog7/motorcycleStores.json');
             const jsonData = await response.json();
+            // Update the jsonData state with the fetched data
             setJsonData(jsonData);
         } catch (error) {
             console.error(error);
@@ -71,50 +106,40 @@ export default function App() {
     };
 
     useEffect(() => {
-        // When the app starts, fetch the information about motorcycle stores
+        // Call the fetchData function when the component mounts
         fetchData();
-    },);
+    }, []);
 
     return (
         <PaperProvider theme={isDarkMode ? darkTheme : lightTheme}>
             <NavigationContainer theme={isDarkMode ? darkTheme : lightTheme}>
-                {/* Bottom Tab Navigation */}
                 <Tab.Navigator
-                    screenOptions={({route}) => ({
-                        // Show icons for each screen in the bottom tab
-                        tabBarIcon: ({color, size}) => {
-                            let iconName;
-
-                            // Determine the icon name based on the screen's name
-                            if (route.name === 'Home') {
-                                iconName = 'home';
-                            } else if (route.name === 'Maps') {
-                                iconName = 'map';
-                            } else if (route.name === 'Overview') {
-                                iconName = 'list';
-                            } else if (route.name === 'Settings') {
-                                iconName = 'cog';
-                            }
-
-                            // Show the icon with the determined name
-                            return <Icon name={iconName} color={color} size={size}/>;
+                    screenOptions={({ route }) => ({
+                        tabBarIcon: ({ color, size }) => {
+                            const iconName = tabIconMappings[route.name];
+                            return <Icon name={iconName} color={color} size={size} />;
                         },
                     })}
                 >
-                    {/* Home Screen */}
                     <Tab.Screen name="Home">
-                        {/* Show the Home screen and give it information about motorcycle stores */}
                         {(props) => (
-                            <HomeScreen {...props} jsonData={jsonData.motorcycleStores} fetchData={fetchData}
-                                        isDarkMode={isDarkMode}/>
+                            // HomeScreen component with props
+                            <HomeScreen
+                                {...props}
+                                jsonData={jsonData.motorcycleStores}
+                                fetchData={fetchData}
+                                isDarkMode={isDarkMode}
+                                favorites={favorites}
+                                setFavorites={setFavorites}
+                                updateFavorites={updateFavorites}
+                            />
                         )}
                     </Tab.Screen>
 
-                    {/* Maps Screen */}
                     <Tab.Screen
                         name="Maps"
                         options={({ route }) => ({
-                            title: getHeaderTitle(route), // Dynamically set the title based on the current route
+                            title: getHeaderTitle(route),
                             tabBarStyle: {
                                 display: route.name === 'Details' ? 'none' : 'flex',
                             },
@@ -130,7 +155,12 @@ export default function App() {
                                     }}
                                 >
                                     {(props) => (
-                                        <MapsScreen {...props} jsonData={jsonData.motorcycleStores} screenProps={{ isDarkMode }} />
+                                        // MapsScreen component with props
+                                        <MapsScreen
+                                            {...props}
+                                            jsonData={jsonData.motorcycleStores}
+                                            screenProps={{ isDarkMode }}
+                                        />
                                     )}
                                 </Stack.Screen>
                                 <Stack.Screen
@@ -142,17 +172,22 @@ export default function App() {
                         )}
                     </Tab.Screen>
 
-                    {/* Overview Screen */}
-                    <Tab.Screen name="Overview">
-                        {/* Show the Overview screen and give it information about motorcycle stores */}
+                    <Tab.Screen name="Favorites">
                         {(props) => (
-                            <OverviewScreen {...props} jsonData={jsonData.motorcycleStores} fetchData={fetchData} isDarkMode={isDarkMode}/>
+                            // FavoritesScreen component with props
+                            <FavoritesScreen
+                                {...props}
+                                jsonData={jsonData.motorcycleStores}
+                                isDarkMode={isDarkMode}
+                                favorites={favorites}
+                                updateFavorites={updateFavorites}
+                            />
                         )}
                     </Tab.Screen>
 
-                    {/* Settings Screen */}
                     <Tab.Screen name="Settings">
-                        {props => (
+                        {(props) => (
+                            // SettingsScreen component with props
                             <SettingsScreen
                                 {...props}
                                 isDarkMode={isDarkMode}
@@ -160,9 +195,9 @@ export default function App() {
                             />
                         )}
                     </Tab.Screen>
-
                 </Tab.Navigator>
             </NavigationContainer>
         </PaperProvider>
     );
+
 }

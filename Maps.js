@@ -1,10 +1,10 @@
-import {StyleSheet, View} from "react-native";
-import MapView, {Marker} from "react-native-maps";
-import React, {useEffect, useState} from "react";
-import {useNavigation} from "@react-navigation/native";
+import { StyleSheet, View } from "react-native";
+import MapView, { Marker } from "react-native-maps";
+import React, { useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 import * as Location from 'expo-location';
 
-export default function MapsScreen({jsonData}) {
+export default function MapsScreen({ jsonData }) {
 
     // Fetches the user's current location when the component mounts
     useEffect(() => {
@@ -13,14 +13,14 @@ export default function MapsScreen({jsonData}) {
 
     // Handles the press event on a marker and navigates to the details screen
     const handleMarkerPress = (item) => {
-        navigation.navigate("Details", {item: item});
+        navigation.navigate("Details", { item: item });
     };
 
     // Requests and retrieves the user's current location
     const getLocationAsync = async () => {
         try {
             // Requests permission to access the user's location
-            const {status} = await Location.requestForegroundPermissionsAsync();
+            const { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
                 return;
             }

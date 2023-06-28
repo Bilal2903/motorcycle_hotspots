@@ -1,11 +1,10 @@
 import React from "react";
-import {View, Text, Dimensions} from "react-native";
-import {StyleSheet} from "react-native";
+import { View, Text, Dimensions } from "react-native";
+import { StyleSheet } from "react-native";
 
-
-export default function DetailScreen({route}) {
+export default function DetailScreen({ route }) {
     // Extracting the 'item' parameter from the route
-    const {item, isDarkMode} = route.params;
+    const { item, isDarkMode } = route.params;
 
     return (
         <View style={[styles.container, isDarkMode && styles.darkContainer]}>
@@ -76,4 +75,3 @@ const styles = StyleSheet.create({
         marginBottom: 12, // Bottom margin of the text
     },
 });
-
