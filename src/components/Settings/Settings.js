@@ -1,5 +1,5 @@
-import { StyleSheet, View, StatusBar, Text } from 'react-native';
 import React from 'react';
+import { StyleSheet, View, StatusBar, Text } from 'react-native';
 import { Switch } from "react-native-gesture-handler";
 
 export default function SettingsScreen({ isDarkMode, setIsDarkMode }) {

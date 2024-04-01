@@ -1,6 +1,6 @@
+import React, { useState, useEffect } from "react";
 import { FlatList, SafeAreaView, StyleSheet, Text, View, Dimensions, TouchableOpacity } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useEffect } from "react";
 import { Entypo } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 

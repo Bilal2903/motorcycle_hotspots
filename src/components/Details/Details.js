@@ -1,6 +1,5 @@
 import React from "react";
-import { View, Text, Dimensions } from "react-native";
-import { StyleSheet } from "react-native";
+import { View, Text, Dimensions, StyleSheet } from "react-native";
 
 export default function DetailScreen({ route }) {
     // Extracting the 'item' parameter from the route
