@@ -67,18 +67,6 @@ export default function MapsScreen({ jsonData }) {
                         onPress={() => handleMarkerPress(item)}
                     />
                 ))}
-
-                 {/* Renders marker for the current location of the user */}
-                 {currentLocation && (
-                    <Marker
-                        coordinate={{
-                            latitude: currentLocation.latitude,
-                            longitude: currentLocation.longitude,
-                        }}
-                        title="Current Location"
-                        pinColor="blue"
-                    />
-                )}
             </MapView>
         </View>
     );
