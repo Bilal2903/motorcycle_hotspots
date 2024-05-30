@@ -1,158 +1,156 @@
 import React, { useState, useEffect } from "react";
-import { FlatList, SafeAreaView, StyleSheet, Text, View, Dimensions, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  ImageBackground,
+  Dimensions,
+  TouchableOpacity,
+  Text,
+  Image,
+} from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { Entypo } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Accelerometer } from 'expo-sensors';
 
-export default function HomeScreen({ jsonData, fetchData, isDarkMode, updateFavorites }) {
-    const [refreshing, setRefreshing] = useState(false);
-    const [favorites, setFavorites] = useState([]);
+export default function HomeScreen() {
+  const [isRideStarted, setIsRideStarted] = useState(false);
+  const [tiltData, setTiltData] = useState({ x: 0, y: 0, z: 0 });
 
-    // Function to handle the press event on the favorite icon
-    const handleFavoritePress = (item) => {
-        // Check if the item is already a favorite
-        if (isFavorite(item)) {
-            // If it is a favorite, remove it from the favorites list
-            deleteFromFavorites(item);
-        } else {
-            // If it is not a favorite, add it to the favorites list
-            addToFavorites(item);
-        }
+  useEffect(() => {
+    _subscribeToTilt();
+    return () => {
+      _unsubscribeFromTilt();
     };
+  }, []);
 
-    // Function to add an item to favorites
-    const addToFavorites = async (item) => {
-        // Create a new array with the current favorites and the new item
-        const updatedFavorites = [...favorites, item];
-        // Update the favorites state with the new array
-        setFavorites(updatedFavorites);
-        // Store the updated favorites list in AsyncStorage
-        await AsyncStorage.setItem('favorites', JSON.stringify(updatedFavorites));
-        // Call the updateFavorites function with the updated favorites list
-        updateFavorites(updatedFavorites);
-    };
+  useEffect(() => {
+    console.log("Tilt data:", tiltData);
+  }, [tiltData]);
 
-    // Function to delete an item from favorites
-    const deleteFromFavorites = async (item) => {
-        // Filter out the item to be deleted from the favorites list
-        const updatedFavorites = favorites.filter(fav => fav.name !== item.name);
-        // Update the favorites state with the updated list
-        setFavorites(updatedFavorites);
-        // Store the updated favorites list in AsyncStorage
-        await AsyncStorage.setItem('favorites', JSON.stringify(updatedFavorites));
-        // Call the updateFavorites function with the updated favorites list
-        updateFavorites(updatedFavorites);
-    };
+  const _subscribeToTilt = () => {
+    Accelerometer.addListener(accelerometerData => {
+      setTiltData(accelerometerData);
+    });
+  };
 
-    // Function to check if an item is a favorite
-    const isFavorite = (item) => {
-        // Check if the item's name exists in the favorites list
-        return favorites.some((fav) => fav.name === item.name);
-    };
+  const _unsubscribeFromTilt = () => {
+    Accelerometer.removeAllListeners();
+  };
 
-    // Function to handle refreshing the data
-    const handleRefresh = () => {
-        // Set the refreshing state to true to indicate data is being refreshed
-        setRefreshing(true);
-        // Fetch new data using the fetchData function
-        fetchData().then(() => {
-            // Set the refreshing state to false after data has been fetched
-            setRefreshing(false);
-        });
-    };
+  const startRide = () => {
+    setIsRideStarted(true);
+    // Voeg hier de code toe om metingen te starten
+  };
 
-    useEffect(() => {
-        // Retrieve favorites from AsyncStorage when the component mounts
-        const fetchFavorites = async () => {
-            try {
-                // Retrieve the stored favorites from AsyncStorage
-                const storedFavorites = await AsyncStorage.getItem('favorites');
-                // Check if favorites exist in AsyncStorage
-                if (storedFavorites) {
-                    // If favorites exist, update the favorites state with the stored favorites
-                    setFavorites(JSON.parse(storedFavorites));
-                }
-            } catch (error) {
-                console.log('Error retrieving data:', error);
-            }
-        };
-        // Call the fetchFavorites function when the component mounts
-        fetchFavorites();
-    }, []);
+  // Voorbeeld van de laatste ritgegevens
+  const lastRide = {
+    date: "16-05-2024",
+    distance: "25 km",
+    duration: "30 min",
+  };
 
-    return (
-        <SafeAreaView style={[styles.container, isDarkMode && styles.darkContainer]}>
-            {/* StatusBar component */}
-            <StatusBar style="auto" />
-            <FlatList
-                // Data to be rendered in the FlatList
-                data={jsonData}
-                // Rendering logic for each item
-                renderItem={({ item }) => (
-                    // View container for each item
-                    <View style={styles.card}>
-                        {/* Favorite icon */}
-                        <TouchableOpacity
-                            onPress={() => handleFavoritePress(item)}
-                            style={styles.favoriteIcon}
-                            activeOpacity={0.8}
-                        >
-                            <Entypo
-                                // Display a filled star icon if the item is a favorite, otherwise display an outlined star icon
-                                name={isFavorite(item) ? 'star' : 'star-outlined'}
-                                size={24}
-                                color="#FF2D55FF"
-                            />
-                        </TouchableOpacity>
-
-                        <Text style={styles.title}>Name: {item.name}</Text>
-                        <Text style={styles.text}>Address: {item.address}</Text>
-                        <Text style={styles.text}>Phone Number: {item.phoneNumber}</Text>
-                        <Text style={styles.text}>Website: {item.website}</Text>
-                    </View>
-                )}
-                // Function to generate unique keys for each item
-                keyExtractor={(item) => item.name}
-                // Set the refreshing state of the FlatList
-                refreshing={refreshing}
-                // Function to handle the refresh event
-                onRefresh={handleRefresh}
+  return (
+    <View style={styles.container}>
+      <StatusBar style="auto" />
+      <ImageBackground
+        source={require("../../../assets/MotorcyleRoad.jpg")}
+        style={styles.backgroundImage}
+      >
+        <Text style={styles.title}>Welcome Username</Text>
+         {/* Tekst "Last Track" */}
+         <Text style={styles.lastTrackText}>LAST TRACK</Text>
+        {/* Rechthoekig figuur */}
+        <View style={styles.rectangle}>
+          {/* Linkerkolom voor de foto */}
+          <View style={styles.leftColumn}>
+            <Image
+              source={require("../../../assets/RollingShoot.jpg")}
+              style={styles.image}
             />
-        </SafeAreaView>
-    );
+          </View>
+          {/* Rechterkolom voor de gegevens */}
+          <View style={styles.rightColumn}>
+            <Text>Date: {lastRide.date}</Text>
+            <Text>Distance: {lastRide.distance}</Text>
+            <Text>Duration: {lastRide.duration}</Text>
+          </View>
+        </View>
+      </ImageBackground>
+    </View>
+  );
 }
 
-// Stylesheet for applying styles to components
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#fff", // Default background color (light mode)
-        paddingHorizontal: 16, // Horizontal padding of 16 units
-    },
-    darkContainer: {
-        backgroundColor: "#000", // Background color for dark mode
-    },
-    card: {
-        backgroundColor: "#E9F8EC", // Light green background color
-        borderRadius: 10, // Rounded corners with a radius of 10 units
-        borderWidth: 1, // Border width of 1 unit
-        borderColor: "#000000", // Black border color
-        padding: 16, // Padding of 16 units around the content
-        marginBottom: 16, // Margin bottom of 16 units for spacing between cards
-        width: Dimensions.get("window").width - 32, // Width equal to the window width minus twice the horizontal padding
-    },
-    favoriteIcon: {
-        position: 'absolute',
-        top: 8,
-        right: 8,
-    },
-    title: {
-        fontSize: 18, // Font size of 18 units
-        fontWeight: "bold", // Bold font weight
-        marginBottom: 8, // Margin bottom of 8 units for spacing between title and other text
-    },
-    text: {
-        fontSize: 16, // Font size of 16 units
-        marginBottom: 4, // Margin bottom of 4 units for spacing between text items
-    },
+  container: {
+    flex: 1,
+  },
+  title: {
+    position: "absolute",
+    top: 80,
+    left: 40,
+    color: "#fff",
+    fontSize: 32,
+    fontWeight: "bold",
+    fontFamily: "Arial",
+    textShadowColor: "#000",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  startButton: {
+    backgroundColor: "red",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    position: "absolute",
+    bottom: 40,
+    left: (Dimensions.get("window").width - 130) / 2,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  rectangle: {
+    flexDirection: "row", // Zet de richting van de weergave in rij om kolommen te maken
+    width: 400,
+    height: 100,
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
+    position: "absolute",
+    top: 500,
+    alignSelf: "center",
+    borderRadius: 10,
+  },
+  leftColumn: {
+    flex: 1, // Maak de linkerkolom flexibel, zodat deze kan worden uitgerekt om ruimte in te nemen
+    justifyContent: "center", // Centreer de inhoud verticaal
+    paddingHorizontal: 10, // Voeg wat padding toe aan de linker- en rechterkant
+  },
+  rightColumn: {
+    flex: 3, // Maak de rechterkolom flexibel, zodat deze meer ruimte inneemt dan de linkerkolom
+    justifyContent: "center", // Centreer de inhoud verticaal
+    paddingHorizontal: 10, // Voeg wat padding toe aan de linker- en rechterkant
+  },
+  image: {
+    width: 80, // Pas de breedte van de afbeelding aan zoals nodig
+    height: 80, // Pas de hoogte van de afbeelding aan zoals nodig
+    borderRadius: 5, // Afgeronde hoeken voor de afbeelding
+  },
+  lastTrackText: {
+    position: "absolute",
+    top: 480, // Pas dit aan afhankelijk van de positie die je wilt
+    marginLeft: 16,
+    alignSelf: "left",
+    color: "#fff",
+    fontSize: 15,
+    fontWeight: "bold",
+    fontFamily: "Arial",
+    textShadowColor: "#000",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },  
 });
