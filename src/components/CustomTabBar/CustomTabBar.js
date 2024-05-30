@@ -20,27 +20,17 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
           }
         };
 
-        const onLongPress = () => {
-          navigation.emit({
-            type: "tabLongPress",
-            target: route.key,
-          });
-        };
-
         let iconName;
         if (route.name === "Home") {
           iconName = "home";
-        } else if (route.name === "Overview") {
-          iconName = "list";
-        } else if (route.name === "Settings") {
-          iconName = "cog";
+        } else if (route.name === "Account") {
+          iconName = "user";
         }
 
         return (
           <TouchableOpacity
             key={index}
             onPress={onPress}
-            onLongPress={onLongPress}
             style={styles.tabButton}
           >
             <Icon
@@ -67,11 +57,16 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
 const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: "row",
-    height: 60,
+    height: 80,
+    borderRadius: 35,
     backgroundColor: "#ffffff",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 10,
+    position: 'absolute',
+    bottom: 45,
+    left: 0,
+    right: 0,
   },
   tabButton: {
     alignItems: "center",
