@@ -11,6 +11,11 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { Accelerometer } from 'expo-sensors';
 
+export function startRide() {
+  // setIsRideStarted(true);
+  console.log('hallo');
+};
+
 export default function HomeScreen() {
   const [isRideStarted, setIsRideStarted] = useState(false);
   const [tiltData, setTiltData] = useState({ x: 0, y: 0, z: 0 });
@@ -34,11 +39,6 @@ export default function HomeScreen() {
 
   const _unsubscribeFromTilt = () => {
     Accelerometer.removeAllListeners();
-  };
-
-  const startRide = () => {
-    setIsRideStarted(true);
-    // Voeg hier de code toe om metingen te starten
   };
 
   // Voorbeeld van de laatste ritgegevens

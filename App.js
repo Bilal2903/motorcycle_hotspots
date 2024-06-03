@@ -7,9 +7,8 @@ import { Provider as PaperProvider } from "react-native-paper";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 
-import HomeScreen from "./src/components/Home/Home";
+import HomeScreen, { startRide } from "./src/components/Home/Home";
 import AccountScreen from "./src/components/Account/Account";
-import { RideStarted } from "./src/components/Home/Home";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -58,7 +57,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
       })}
       <TouchableOpacity
         style={styles.goButton}
-        onPress={RideStarted}
+        onPress={startRide}
       >
         <Text style={styles.goButtonText}>GO!</Text>
       </TouchableOpacity>
