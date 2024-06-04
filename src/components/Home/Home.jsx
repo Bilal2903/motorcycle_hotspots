@@ -4,43 +4,12 @@ import {
   View,
   ImageBackground,
   Dimensions,
-  TouchableOpacity,
   Text,
   Image,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { Accelerometer } from 'expo-sensors';
-
-export function startRide() {
-  // setIsRideStarted(true);
-  console.log('hallo');
-};
 
 export default function HomeScreen() {
-  const [isRideStarted, setIsRideStarted] = useState(false);
-  const [tiltData, setTiltData] = useState({ x: 0, y: 0, z: 0 });
-
-  useEffect(() => {
-    _subscribeToTilt();
-    return () => {
-      _unsubscribeFromTilt();
-    };
-  }, []);
-
-  useEffect(() => {
-    console.log("Tilt data:", tiltData);
-  }, [tiltData]);
-
-  const _subscribeToTilt = () => {
-    Accelerometer.addListener(accelerometerData => {
-      setTiltData(accelerometerData);
-    });
-  };
-
-  const _unsubscribeFromTilt = () => {
-    Accelerometer.removeAllListeners();
-  };
-
   // Voorbeeld van de laatste ritgegevens
   const lastRide = {
     date: "16-05-2024",

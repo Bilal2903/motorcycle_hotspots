@@ -1,19 +1,53 @@
 import "react-native-gesture-handler";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Provider as PaperProvider } from "react-native-paper";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { Accelerometer } from 'expo-sensors';
 
-import HomeScreen, { startRide } from "./src/components/Home/Home";
+import HomeScreen from "./src/components/Home/Home";
 import AccountScreen from "./src/components/Account/Account";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 const CustomTabBar = ({ state, descriptors, navigation }) => {
+  const [isRideStarted, setIsRideStarted] = useState(false);
+  const [tiltData, setTiltData] = useState({ x: 0, y: 0, z: 0 });
+
+  useEffect(() => {
+    _subscribeToTilt();
+    return () => {
+      _unsubscribeFromTilt();
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log("Tilt data:", tiltData);
+  }, [tiltData]);
+
+  const startRide = () => {
+    setIsRideStarted(true);
+    _subscribeToTilt();
+    console.log('hallo');
+  };
+
+
+  const _subscribeToTilt = () => {
+    if (isRideStarted) {
+      Accelerometer.addListener(accelerometerData => {
+        setTiltData(accelerometerData);
+      });
+    }
+  };
+
+  const _unsubscribeFromTilt = () => {
+    Accelerometer.removeAllListeners();
+  };
+
   return (
     <View style={styles.tabContainer}>
       {state.routes.map((route, index) => {
