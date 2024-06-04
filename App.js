@@ -35,7 +35,6 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
     console.log('hallo');
   };
 
-
   const _subscribeToTilt = () => {
     if (isRideStarted) {
       Accelerometer.addListener(accelerometerData => {
