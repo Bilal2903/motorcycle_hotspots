@@ -26,7 +26,11 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
   }, []);
 
   useEffect(() => {
-    console.log("Tilt data:", tiltData);
+    // console.log("Tilt data:", tiltData);
+    if (isRideStarted) {
+      const leanAngle = calculateLeanAngle(tiltData.x, tiltData.z);
+      console.log("Lean Angle:", leanAngle, "degrees");
+    }
   }, [tiltData]);
 
   const startRide = () => {
@@ -45,6 +49,14 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
 
   const _unsubscribeFromTilt = () => {
     Accelerometer.removeAllListeners();
+  };
+
+  const calculateLeanAngle = (x, z) => {
+    const radians = Math.atan2(x, z);
+    let degrees = radians * (180 / Math.PI);
+  
+    degrees = Math.round(degrees);
+    return degrees;
   };
 
   return (
