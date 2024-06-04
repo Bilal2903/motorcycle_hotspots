@@ -10,7 +10,6 @@ import {
 import { StatusBar } from "expo-status-bar";
 
 export default function HomeScreen() {
-  // Voorbeeld van de laatste ritgegevens
   const lastRide = {
     date: "16-05-2024",
     distance: "25 km",
