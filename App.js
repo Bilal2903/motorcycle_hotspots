@@ -6,7 +6,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { Provider as PaperProvider } from "react-native-paper";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { Accelerometer } from 'expo-sensors';
+import { Accelerometer } from "expo-sensors";
 
 import HomeScreen from "./src/components/Home/Home";
 import AccountScreen from "./src/components/Account/Account";
@@ -36,33 +36,30 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
   const startRide = () => {
     setIsRideStarted(true);
     _subscribeToTilt();
-    console.log('hallo');
+    console.log("hallo");
   };
 
   const _subscribeToTilt = () => {
-    if (isRideStarted) {
-      Accelerometer.addListener(accelerometerData => {
-        setTiltData(accelerometerData);
-      });
-    }
+    Accelerometer.addListener((accelerometerData) => {
+      setTiltData(accelerometerData);
+    });
   };
 
   const calculateLeanAngle = (x, z) => {
     const radians = Math.atan2(x, z);
     let degrees = radians * (180 / Math.PI);
-  
+
     // Correctie om 0° te krijgen wanneer telefoon plat ligt
     degrees = 180 - degrees;
-  
+
     // Als de hoek groter is dan 180, omzetten naar negatieve hoek
     if (degrees > 180) {
-        degrees -= 360;
+      degrees -= 360;
     }
-  
+
     degrees = Math.round(degrees);
     return degrees;
   };
-
 
   return (
     <View style={styles.tabContainer}>
@@ -105,10 +102,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
           </TouchableOpacity>
         );
       })}
-      <TouchableOpacity
-        style={styles.goButton}
-        onPress={startRide}
-      >
+      <TouchableOpacity style={styles.goButton} onPress={startRide}>
         <Text style={styles.goButtonText}>GO!</Text>
       </TouchableOpacity>
     </View>
@@ -124,7 +118,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 10,
-    position: 'absolute',
+    position: "absolute",
     bottom: 45,
     left: 0,
     right: 0,
