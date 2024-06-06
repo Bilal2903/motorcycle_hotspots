@@ -47,17 +47,22 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
     }
   };
 
-  const _unsubscribeFromTilt = () => {
-    Accelerometer.removeAllListeners();
-  };
-
   const calculateLeanAngle = (x, z) => {
     const radians = Math.atan2(x, z);
     let degrees = radians * (180 / Math.PI);
   
+    // Correctie om 0° te krijgen wanneer telefoon plat ligt
+    degrees = 180 - degrees;
+  
+    // Als de hoek groter is dan 180, omzetten naar negatieve hoek
+    if (degrees > 180) {
+        degrees -= 360;
+    }
+  
     degrees = Math.round(degrees);
     return degrees;
   };
+
 
   return (
     <View style={styles.tabContainer}>
