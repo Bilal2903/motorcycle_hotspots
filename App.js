@@ -10,6 +10,7 @@ import { Accelerometer } from "expo-sensors";
 
 import HomeScreen from "./src/components/Home/Home";
 import AccountScreen from "./src/components/Account/Account";
+import RideScreen from "./src/components/RideScreen/RideScreen"; // Rename to RideScreen
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -17,6 +18,7 @@ const Stack = createStackNavigator();
 const CustomTabBar = ({ state, descriptors, navigation }) => {
   const [isRideStarted, setIsRideStarted] = useState(false);
   const [tiltData, setTiltData] = useState({ x: 0, y: 0, z: 0 });
+  const [leanAngle, setLeanAngle] = useState(0);
 
   useEffect(() => {
     _subscribeToTilt();
@@ -26,17 +28,17 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
   }, []);
 
   useEffect(() => {
-    // console.log("Tilt data:", tiltData);
     if (isRideStarted) {
-      const leanAngle = calculateLeanAngle(tiltData.x, tiltData.z);
+      const angle = calculateLeanAngle(tiltData.x, tiltData.z);
       console.log("Lean Angle:", leanAngle, "degrees");
+      setLeanAngle(angle);
     }
   }, [tiltData]);
 
   const startRide = () => {
     setIsRideStarted(true);
-    _subscribeToTilt();
-    console.log("hallo");
+    navigation.navigate("RideScreen");
+    console.log('Ride Started...')
   };
 
   const _subscribeToTilt = () => {
@@ -48,17 +50,16 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
   const calculateLeanAngle = (x, z) => {
     const radians = Math.atan2(x, z);
     let degrees = radians * (180 / Math.PI);
-
-    // Correctie om 0° te krijgen wanneer telefoon plat ligt
     degrees = 180 - degrees;
-
-    // Als de hoek groter is dan 180, omzetten naar negatieve hoek
     if (degrees > 180) {
       degrees -= 360;
     }
-
     degrees = Math.round(degrees);
     return degrees;
+  };
+
+  const _unsubscribeFromTilt = () => {
+    Accelerometer.removeAllListeners();
   };
 
   return (
@@ -145,22 +146,39 @@ const styles = StyleSheet.create({
   },
 });
 
+const MainTabNavigator = () => {
+  return (
+    <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />}>
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ headerShown: false }}
+      />
+      <Tab.Screen
+        name="Account"
+        component={AccountScreen}
+        options={{ headerShown: false }}
+      />
+    </Tab.Navigator>
+  );
+};
+
 export default function App() {
   return (
     <PaperProvider>
       <NavigationContainer>
-        <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />}>
-          <Tab.Screen
-            name="Home"
-            component={HomeScreen}
+        <Stack.Navigator>
+          <Stack.Screen
+            name="MainTabs"
+            component={MainTabNavigator}
             options={{ headerShown: false }}
           />
-          <Tab.Screen
-            name="Account"
-            component={AccountScreen}
+          <Stack.Screen
+            name="RideScreen"
+            component={RideScreen}
             options={{ headerShown: false }}
           />
-        </Tab.Navigator>
+        </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>
   );
