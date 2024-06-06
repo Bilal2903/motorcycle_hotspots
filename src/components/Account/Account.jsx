@@ -96,7 +96,7 @@ export default function AccountScreen() {
       <View className="bg-white mt-5 mx-5 rounded-xl p-5">
         <TouchableOpacity
           className="flex-row justify-between items-between"
-          onPress={handleLogout}
+          // onPress={handleLogout}
         >
           <Text
             style={{ fontFamily: "Montserrat_700Bold" }}
