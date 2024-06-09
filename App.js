@@ -7,10 +7,14 @@ import { Provider as PaperProvider } from "react-native-paper";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Accelerometer } from "expo-sensors";
+import useAuth from "./hooks/useAuth";
+import firebase from "firebase/app";
 
 import HomeScreen from "./src/components/Home/Home";
 import AccountScreen from "./src/components/Account/Account";
-import RideScreen from "./src/components/RideScreen/RideScreen"; // Rename to RideScreen
+import RideScreen from "./src/components/RideScreen/RideScreen";
+import Register from "./src/components/Register/Register";
+import Login from "./src/components/Login/Login";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -38,7 +42,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
   const startRide = () => {
     setIsRideStarted(true);
     navigation.navigate("RideScreen");
-    console.log('Ride Started...')
+    console.log("Ride Started...");
   };
 
   const _subscribeToTilt = () => {
@@ -164,20 +168,39 @@ const MainTabNavigator = () => {
 };
 
 export default function App() {
+  const { user } = useAuth();
+
   return (
     <PaperProvider>
       <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen
-            name="MainTabs"
-            component={MainTabNavigator}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="RideScreen"
-            component={RideScreen}
-            options={{ headerShown: false }}
-          />
+        <Stack.Navigator initialRouteName="Login">
+          {user ? (
+            <>
+              <Stack.Screen
+                name="MainTabs"
+                component={MainTabNavigator}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="RideScreen"
+                component={RideScreen}
+                options={{ headerShown: false }}
+              />
+            </>
+          ) : (
+            <>
+              <Stack.Screen
+                name="Register"
+                component={Register}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Login"
+                component={Login}
+                options={{ headerShown: false }}
+              />
+            </>
+          )}
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>

@@ -8,6 +8,7 @@ import {
   Image,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { db, auth } from "../../../config/firebase";
 
 export default function HomeScreen() {
   const lastRide = {
@@ -23,9 +24,9 @@ export default function HomeScreen() {
         source={require("../../../assets/MotorcyleRoad.jpg")}
         style={styles.backgroundImage}
       >
-        <Text style={styles.title}>Welcome Username</Text>
-         {/* Tekst "Last Track" */}
-         <Text style={styles.lastTrackText}>LAST TRACK</Text>
+        <Text style={styles.title}>Welcome {auth.currentUser.displayName}</Text>
+        {/* Tekst "Last Track" */}
+        <Text style={styles.lastTrackText}>LAST TRACK</Text>
         {/* Rechthoekig figuur */}
         <View style={styles.rectangle}>
           {/* Linkerkolom voor de foto */}
@@ -120,5 +121,5 @@ const styles = StyleSheet.create({
     textShadowColor: "#000",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
-  },  
+  },
 });

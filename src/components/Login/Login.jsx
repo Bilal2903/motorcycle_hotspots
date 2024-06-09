@@ -6,74 +6,35 @@ import {
   Image,
   StyleSheet,
 } from "react-native";
-import Animated, {
-  FadeInDown,
-} from "react-native-reanimated";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "../../../config/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "./../../../config/firebase";
 
-export default function Register() {
+export default function Login() {
   const navigation = useNavigation();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [displayName, setDisplayName] = useState("");
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
   const [error, setError] = useState("");
 
-  const handlesubmit = async () => {
-    if (email && password && displayName) {
-      // Controleer of displayName is ingevuld
+  const handleSubmit = async () => {
+    if (email && password) {
       try {
-        const userCredential = await createUserWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-        const user = userCredential.user;
-
-        // Update profile met displayName
-        await updateProfile(user, { displayName: displayName });
+        await signInWithEmailAndPassword(auth, email, password);
         navigation.navigate("Home");
       } catch (err) {
-        switch (err.code) {
-          case "auth/email-already-in-use":
-            setError("This e-mail is already in use");
-            break;
-          case "auth/invalid-email":
-            setError("Invalid e-mail adress");
-            break;
-          case "auth/weak-password":
-            setError("Please create an password with at least 6 characters");
-            break;
-          default:
-            setError("There has been an error, please try again");
-        }
+        setError("Ongeldige gebruikersnaam of wachtwoord.");
       }
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>Register</Text>
-
       <Animated.View
-        entering={FadeInDown.delay(200).duration(3000).springify()}
+        entering={FadeInDown.delay(200).duration(2000).springify()}
       >
-        <Text style={styles.title}>Username</Text>
-        <View style={styles.inputContainer}>
-          <Image
-            style={{ width: 16, height: 16, marginRight: 12 }}
-            source={require("../../../assets/profile-full.png")}
-          />
-          <TextInput
-            style={{ flex: 1 }}
-            placeholder=""
-            value={displayName}
-            onChangeText={(value) => setDisplayName(value)}
-          />
-        </View>
+        <Text style={styles.headerText}>Login</Text>
       </Animated.View>
 
       <Animated.View
@@ -118,8 +79,8 @@ export default function Register() {
       <Animated.View
         entering={FadeInDown.delay(500).duration(3000).springify()}
       >
-        <TouchableOpacity style={styles.button} onPress={handlesubmit}>
-          <Text style={styles.buttonText}>Sign up</Text>
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
       </Animated.View>
 
@@ -150,6 +111,17 @@ export default function Register() {
               source={require("../../../assets/apple.png")}
               style={styles.iconImage}
             />
+          </TouchableOpacity>
+        </View>
+      </Animated.View>
+
+      <Animated.View
+        entering={FadeInDown.delay(700).duration(3000).springify()}
+      >
+        <View style={styles.signUpTextContainer}>
+          <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+            <Text style={styles.signUpText}>Don't have an account yet?</Text>
+            <Text style={styles.signUpLink}>Sign up here</Text>
           </TouchableOpacity>
         </View>
       </Animated.View>
@@ -185,9 +157,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     backgroundColor: "white",
-    color: "#4B5563",
+    color: "#4B5563", // text-gray-700
     borderRadius: 8,
-    borderColor: "#E5E7EB",
+    borderColor: "#E5E7EB", // border-gray-200
     borderWidth: 1,
     fontSize: 16,
     fontWeight: "500",
@@ -202,8 +174,8 @@ const styles = StyleSheet.create({
   },
   button: {
     paddingVertical: 12,
-    backgroundColor: "#1E3A8A",
-    borderRadius: 9999,
+    backgroundColor: "#1E3A8A", // dark-blue
+    borderRadius: 9999, // rounded-full
     marginBottom: 20,
     width: 240,
     alignSelf: "center",
