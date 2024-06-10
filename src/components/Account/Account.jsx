@@ -93,7 +93,7 @@ export default function AccountScreen() {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.cardsHeaderContainer}>
+        {/* <View style={styles.cardsHeaderContainer}>
           <Text
             style={[
               styles.cardsHeaderText,
@@ -116,7 +116,7 @@ export default function AccountScreen() {
               <Text style={styles.cardText}>Rit 3</Text>
             </View>
           </ScrollView>
-        </View>
+        </View> */}
       </ScrollView>
     </View>
   );

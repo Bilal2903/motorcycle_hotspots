@@ -15,6 +15,7 @@ import AccountScreen from "./src/components/Account/Account";
 import RideScreen from "./src/components/RideScreen/RideScreen";
 import Register from "./src/components/Register/Register";
 import Login from "./src/components/Login/Login";
+import RideSummaryScreen from "./src/components/RideSummaryScreen/RideSummaryScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -31,13 +32,14 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
     };
   }, []);
 
-  useEffect(() => {
-    if (isRideStarted) {
-      const angle = calculateLeanAngle(tiltData.x, tiltData.z);
-      console.log("Lean Angle:", leanAngle, "degrees");
-      setLeanAngle(angle);
-    }
-  }, [tiltData]);
+// Maybe mag dit weg want het werkt terwijl dit uitgecommand is
+  // useEffect(() => {
+  //   if (isRideStarted) {
+  //     const angle = calculateLeanAngle(tiltData.x, tiltData.z);
+  //     console.log("Lean Angle:", leanAngle, "degrees");
+  //     setLeanAngle(angle);
+  //   }
+  // }, [tiltData]);
 
   const startRide = () => {
     setIsRideStarted(true);
@@ -50,17 +52,17 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
       setTiltData(accelerometerData);
     });
   };
-
-  const calculateLeanAngle = (x, z) => {
-    const radians = Math.atan2(x, z);
-    let degrees = radians * (180 / Math.PI);
-    degrees = 180 - degrees;
-    if (degrees > 180) {
-      degrees -= 360;
-    }
-    degrees = Math.round(degrees);
-    return degrees;
-  };
+// Maybe mag dit weg want het werkt terwijl dit uitgecommand is
+  // const calculateLeanAngle = (x, z) => {
+  //   const radians = Math.atan2(x, z);
+  //   let degrees = radians * (180 / Math.PI);
+  //   degrees = 180 - degrees;
+  //   if (degrees > 180) {
+  //     degrees -= 360;
+  //   }
+  //   degrees = Math.round(degrees);
+  //   return degrees;
+  // };
 
   const _unsubscribeFromTilt = () => {
     Accelerometer.removeAllListeners();
@@ -184,6 +186,12 @@ export default function App() {
               <Stack.Screen
                 name="RideScreen"
                 component={RideScreen}
+                options={{ headerShown: false }}
+              />
+
+              <Stack.Screen
+                name="RideSummary"
+                component={RideSummaryScreen}
                 options={{ headerShown: false }}
               />
             </>

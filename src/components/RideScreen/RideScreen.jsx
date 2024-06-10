@@ -6,13 +6,17 @@ import { Accelerometer } from "expo-sensors";
 const RideScreen = () => {
   const navigation = useNavigation();
   const [tiltData, setTiltData] = useState({ x: 0, y: 0, z: 0 });
-  const [leanAngle, setLeanAngle] = useState(0);
+  const [maxLeanAngleLeft, setMaxLeanAngleLeft] = useState(0);
+  const [maxLeanAngleRight, setMaxLeanAngleRight] = useState(0);
+  const [brakeCount, setBrakeCount] = useState(0);
+  const [accelerationCount, setAccelerationCount] = useState(0);
 
   useFocusEffect(
     React.useCallback(() => {
       const subscribeToTilt = () => {
         Accelerometer.addListener((accelerometerData) => {
           setTiltData(accelerometerData);
+          checkBrakeAndAcceleration(accelerometerData.y);
         });
       };
 
@@ -28,7 +32,6 @@ const RideScreen = () => {
 
   useEffect(() => {
     const calculateLeanAngle = (x, z) => {
-      console.log("Lean Angle:", leanAngle, "degrees");
       const radians = Math.atan2(x, z);
       let degrees = radians * (180 / Math.PI);
       degrees = 180 - degrees;
@@ -40,22 +43,79 @@ const RideScreen = () => {
     };
 
     const angle = calculateLeanAngle(tiltData.x, tiltData.z);
-    setLeanAngle(angle);
+
+    const noseAngle = calculateLeanAngle(tiltData.y, tiltData.z);
+    console.log("Current Nose Angle:", noseAngle);
+    // console.log("time hard braked:", brakeCount);
+    // console.log("times hard accelerated:", accelerationCount);
+
+    // Update max lean angles with logging
+    if (angle > 0 && angle !== 180) {
+      // Ensure angle is not 180
+      if (angle > maxLeanAngleRight) {
+        console.log("Updating maxLeanAngleRight:", angle);
+        setMaxLeanAngleRight(angle);
+      }
+    } else if (angle < 0) {
+      if (angle < maxLeanAngleLeft) {
+        console.log("Updating maxLeanAngleLeft:", angle);
+        setMaxLeanAngleLeft(angle);
+      }
+    }
   }, [tiltData]);
 
   const stopRide = () => {
     Accelerometer.removeAllListeners();
-    navigation.navigate("Home");
-    console.log('Ride Stoped...')
+    console.log("Navigating with values:", {
+      maxLeanAngleLeft,
+      maxLeanAngleRight,
+      brakeCount,
+      accelerationCount,
+    });
+    navigation.navigate("RideSummary", {
+      maxLeanAngleLeft: maxLeanAngleLeft === -Infinity ? 0 : maxLeanAngleLeft,
+      maxLeanAngleRight:
+        maxLeanAngleRight === -Infinity ? 0 : maxLeanAngleRight,
+      brakeCount,
+      accelerationCount,
+    });
+    console.log("Ride Stopped...");
+  };
+
+  //Er voor zorgen dat hij optelt bij hard breaking en acceleration ding
+  const checkBrakeAndAcceleration = (y) => {
+    const brakeThreshold = -5; // Drempelwaarde voor hard remmen
+    const accelerationThreshold = 5; // Drempelwaarde voor hard gas geven
+    
+    if (noseAngle < brakeThreshold) {
+      console.log("Een keer hard geremd");
+      if (tiltData.y < brakeThreshold) { // Check of de neus onder de drempelwaarde is
+        setBrakeCount((prevCount) => {
+          console.log("Brake count updated:", prevCount + 1);
+          return prevCount + 1;
+        });
+      }
+    } else if (noseAngle > accelerationThreshold) {
+      console.log("Kanker hard gas gegeven ouwe");
+      if (tiltData.y > accelerationThreshold) { // Check of de neus boven de drempelwaarde is
+        setAccelerationCount((prevCount) => {
+          console.log("Acceleration count updated:", prevCount + 1);
+          return prevCount + 1;
+        });
+      }
+    }
   };
 
   return (
     <View style={styles.rideScreen}>
       <View style={styles.screenContent}>
-        <Text style={styles.screenTitle}>Rit in uitvoering...</Text>
-        <Text style={styles.screenText}>Lean Angle: {leanAngle}°</Text>
+        <Text style={styles.screenTitle}>Ride Started...</Text>
+        <Text style={styles.screenDiscription}>
+          We're currently analyzing your ride to provide you with valuable
+          feedback once it's complete. Enjoy the journey!
+        </Text>
         <TouchableOpacity style={styles.stopButton} onPress={stopRide}>
-          <Text style={styles.stopButtonText}>Stop</Text>
+          <Text style={styles.stopButtonText}>Stop the ride</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -74,7 +134,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
     alignItems: "center",
-    width: '80%',
+    width: "80%",
     maxWidth: 300,
   },
   screenTitle: {
@@ -85,6 +145,11 @@ const styles = StyleSheet.create({
   screenText: {
     fontSize: 18,
     marginBottom: 20,
+  },
+  screenDiscription: {
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: "center",
   },
   stopButton: {
     backgroundColor: "red",
