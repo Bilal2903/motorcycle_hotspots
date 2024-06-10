@@ -15,6 +15,7 @@ const RideScreen = () => {
     React.useCallback(() => {
       const subscribeToTilt = () => {
         Accelerometer.addListener((accelerometerData) => {
+          // console.log("Accelerometer Data:", accelerometerData.y);
           setTiltData(accelerometerData);
           checkBrakeAndAcceleration(accelerometerData.y);
         });
@@ -43,8 +44,8 @@ const RideScreen = () => {
     };
 
     const angle = calculateLeanAngle(tiltData.x, tiltData.z);
-
     const noseAngle = calculateLeanAngle(tiltData.y, tiltData.z);
+
     console.log("Current Nose Angle:", noseAngle);
     // console.log("time hard braked:", brakeCount);
     // console.log("times hard accelerated:", accelerationCount);
@@ -53,12 +54,12 @@ const RideScreen = () => {
     if (angle > 0 && angle !== 180) {
       // Ensure angle is not 180
       if (angle > maxLeanAngleRight) {
-        console.log("Updating maxLeanAngleRight:", angle);
+        // console.log("Updating maxLeanAngleRight:", angle);
         setMaxLeanAngleRight(angle);
       }
     } else if (angle < 0) {
       if (angle < maxLeanAngleLeft) {
-        console.log("Updating maxLeanAngleLeft:", angle);
+        // console.log("Updating maxLeanAngleLeft:", angle);
         setMaxLeanAngleLeft(angle);
       }
     }
@@ -83,26 +84,16 @@ const RideScreen = () => {
   };
 
   //Er voor zorgen dat hij optelt bij hard breaking en acceleration ding
-  const checkBrakeAndAcceleration = (y) => {
-    const brakeThreshold = -5; // Drempelwaarde voor hard remmen
-    const accelerationThreshold = 5; // Drempelwaarde voor hard gas geven
-    
+  const checkBrakeAndAcceleration = (noseAngle) => {
+    // console.log("checkBrakeAndAcceleration called with noseAngle:", noseAngle);
+  
+    const brakeThreshold = -0.15;
+    const accelerationThreshold = 0.15;
+  
     if (noseAngle < brakeThreshold) {
-      console.log("Een keer hard geremd");
-      if (tiltData.y < brakeThreshold) { // Check of de neus onder de drempelwaarde is
-        setBrakeCount((prevCount) => {
-          console.log("Brake count updated:", prevCount + 1);
-          return prevCount + 1;
-        });
-      }
+      console.log("Je hebt kanker veel gas gegeven");
     } else if (noseAngle > accelerationThreshold) {
-      console.log("Kanker hard gas gegeven ouwe");
-      if (tiltData.y > accelerationThreshold) { // Check of de neus boven de drempelwaarde is
-        setAccelerationCount((prevCount) => {
-          console.log("Acceleration count updated:", prevCount + 1);
-          return prevCount + 1;
-        });
-      }
+      console.log("Je hebt nu hard geremd");
     }
   };
 

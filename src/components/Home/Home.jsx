@@ -11,6 +11,8 @@ import { StatusBar } from "expo-status-bar";
 import { db, auth } from "../../../config/firebase";
 
 export default function HomeScreen() {
+  const user = auth.currentUser;
+
   const lastRide = {
     date: "16-05-2024",
     distance: "25 km",
