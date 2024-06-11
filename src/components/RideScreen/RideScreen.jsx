@@ -48,6 +48,7 @@ const RideScreen = () => {
 
     const angle = calculateLeanAngle(tiltData.x, tiltData.z);
     const noseAngle = calculateLeanAngle(tiltData.y, tiltData.z);
+    console.log(noseAngle);
 
     if (initializing) {
       setTimeout(() => setInitializing(false), 1000);
