@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   StyleSheet,
   View,
@@ -8,7 +8,7 @@ import {
   Image,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { db, auth } from "../../../config/firebase";
+import { auth } from "../../../config/firebase";
 
 export default function HomeScreen() {
   const user = auth.currentUser;
@@ -27,18 +27,14 @@ export default function HomeScreen() {
         style={styles.backgroundImage}
       >
         <Text style={styles.title}>Welcome {auth.currentUser.displayName}</Text>
-        {/* Tekst "Last Track" */}
         <Text style={styles.lastTrackText}>LAST TRACK</Text>
-        {/* Rechthoekig figuur */}
         <View style={styles.rectangle}>
-          {/* Linkerkolom voor de foto */}
           <View style={styles.leftColumn}>
             <Image
               source={require("../../../assets/RollingShoot.jpg")}
               style={styles.image}
             />
           </View>
-          {/* Rechterkolom voor de gegevens */}
           <View style={styles.rightColumn}>
             <Text>Date: {lastRide.date}</Text>
             <Text>Distance: {lastRide.distance}</Text>
@@ -87,7 +83,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   rectangle: {
-    flexDirection: "row", // Zet de richting van de weergave in rij om kolommen te maken
+    flexDirection: "row",
     width: 400,
     height: 100,
     backgroundColor: "rgba(255, 255, 255, 0.7)",
@@ -97,23 +93,23 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   leftColumn: {
-    flex: 1, // Maak de linkerkolom flexibel, zodat deze kan worden uitgerekt om ruimte in te nemen
-    justifyContent: "center", // Centreer de inhoud verticaal
-    paddingHorizontal: 10, // Voeg wat padding toe aan de linker- en rechterkant
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: 10,
   },
   rightColumn: {
-    flex: 3, // Maak de rechterkolom flexibel, zodat deze meer ruimte inneemt dan de linkerkolom
-    justifyContent: "center", // Centreer de inhoud verticaal
-    paddingHorizontal: 10, // Voeg wat padding toe aan de linker- en rechterkant
+    flex: 3,
+    justifyContent: "center",
+    paddingHorizontal: 10,
   },
   image: {
-    width: 80, // Pas de breedte van de afbeelding aan zoals nodig
-    height: 80, // Pas de hoogte van de afbeelding aan zoals nodig
-    borderRadius: 5, // Afgeronde hoeken voor de afbeelding
+    width: 80,
+    height: 80,
+    borderRadius: 5,
   },
   lastTrackText: {
     position: "absolute",
-    top: 480, // Pas dit aan afhankelijk van de positie die je wilt
+    top: 480,
     marginLeft: 16,
     alignSelf: "left",
     color: "#fff",

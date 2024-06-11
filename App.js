@@ -31,7 +31,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
     };
   }, []);
 
-// Maybe mag dit weg want het werkt terwijl dit uitgecommand is
+  // Maybe mag dit weg want het werkt terwijl dit uitgecommand is
   // useEffect(() => {
   //   if (isRideStarted) {
   //     const angle = calculateLeanAngle(tiltData.x, tiltData.z);
@@ -51,7 +51,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
       setTiltData(accelerometerData);
     });
   };
-// Maybe mag dit weg want het werkt terwijl dit uitgecommand is
+  // Maybe mag dit weg want het werkt terwijl dit uitgecommand is
   // const calculateLeanAngle = (x, z) => {
   //   const radians = Math.atan2(x, z);
   //   let degrees = radians * (180 / Math.PI);

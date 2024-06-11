@@ -10,10 +10,11 @@ const RideScreen = () => {
   const [maxLeanAngleRight, setMaxLeanAngleRight] = useState(0);
 
   const [brakeThresholdCrossed, setBrakeThresholdCrossed] = useState(false);
-  const [accelerationThresholdCrossed, setAccelerationThresholdCrossed] = useState(false);
+  const [accelerationThresholdCrossed, setAccelerationThresholdCrossed] =
+    useState(false);
   const [brakeCount, setBrakeCount] = useState(0);
   const [accelerationCount, setAccelerationCount] = useState(0);
-  const [initializing, setInitializing] = useState(true); // New state to handle initialization
+  const [initializing, setInitializing] = useState(true);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -47,10 +48,9 @@ const RideScreen = () => {
 
     const angle = calculateLeanAngle(tiltData.x, tiltData.z);
     const noseAngle = calculateLeanAngle(tiltData.y, tiltData.z);
-    console.log(noseAngle);
 
     if (initializing) {
-      setTimeout(() => setInitializing(false), 1000); // Ignore the first 1 second of data
+      setTimeout(() => setInitializing(false), 1000);
     } else {
       checkBrakeAndAcceleration(noseAngle);
 
@@ -85,8 +85,8 @@ const RideScreen = () => {
   };
 
   const checkBrakeAndAcceleration = (noseAngle) => {
-    const brakeThreshold = 10;
-    const accelerationThreshold = -11;
+    const brakeThreshold = 15;
+    const accelerationThreshold = -15;
 
     if (noseAngle > brakeThreshold) {
       if (!brakeThresholdCrossed) {
@@ -156,14 +156,14 @@ const styles = StyleSheet.create({
   },
   stopButton: {
     backgroundColor: "red",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 8,
   },
   stopButtonText: {
     color: "#fff",
+    fontSize: 18,
     fontWeight: "bold",
-    fontSize: 16,
   },
 });
 

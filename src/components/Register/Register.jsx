@@ -24,7 +24,6 @@ export default function Register() {
 
   const handlesubmit = async () => {
     if (email && password && displayName) {
-      // Controleer of displayName is ingevuld
       try {
         const userCredential = await createUserWithEmailAndPassword(
           auth,
@@ -33,7 +32,6 @@ export default function Register() {
         );
         const user = userCredential.user;
 
-        // Update profile met displayName
         await updateProfile(user, { displayName: displayName });
         navigation.navigate("Home");
       } catch (err) {

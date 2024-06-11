@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { FontAwesome5 } from "@expo/vector-icons"; // Importeer FontAwesome5 vanuit @expo/vector-icons
+import { FontAwesome5 } from "@expo/vector-icons";
 
 const RideSummaryScreen = ({ route }) => {
   const navigation = useNavigation();

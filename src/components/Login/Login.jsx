@@ -24,7 +24,7 @@ export default function Login() {
         await signInWithEmailAndPassword(auth, email, password);
         navigation.navigate("Home");
       } catch (err) {
-        setError("Ongeldige gebruikersnaam of wachtwoord.");
+        setError("Invalid username or password.");
       }
     }
   };
@@ -157,9 +157,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     backgroundColor: "white",
-    color: "#4B5563", // text-gray-700
+    color: "#4B5563",
     borderRadius: 8,
-    borderColor: "#E5E7EB", // border-gray-200
+    borderColor: "#E5E7EB", 
     borderWidth: 1,
     fontSize: 16,
     fontWeight: "500",
@@ -174,8 +174,8 @@ const styles = StyleSheet.create({
   },
   button: {
     paddingVertical: 12,
-    backgroundColor: "#1E3A8A", // dark-blue
-    borderRadius: 9999, // rounded-full
+    backgroundColor: "#1E3A8A", 
+    borderRadius: 9999,
     marginBottom: 20,
     width: 240,
     alignSelf: "center",
