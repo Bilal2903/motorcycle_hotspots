@@ -8,7 +8,6 @@ import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Accelerometer } from "expo-sensors";
 import useAuth from "./hooks/useAuth";
-import firebase from "firebase/app";
 
 import HomeScreen from "./src/components/Home/Home";
 import AccountScreen from "./src/components/Account/Account";

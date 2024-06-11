@@ -13,6 +13,7 @@ const RideScreen = () => {
   const [accelerationThresholdCrossed, setAccelerationThresholdCrossed] = useState(false);
   const [brakeCount, setBrakeCount] = useState(0);
   const [accelerationCount, setAccelerationCount] = useState(0);
+  const [initializing, setInitializing] = useState(true); // New state to handle initialization
 
   useFocusEffect(
     React.useCallback(() => {
@@ -46,17 +47,21 @@ const RideScreen = () => {
 
     const angle = calculateLeanAngle(tiltData.x, tiltData.z);
     const noseAngle = calculateLeanAngle(tiltData.y, tiltData.z);
+    console.log(noseAngle);
 
-    console.log("Current Nose Angle:", noseAngle);
-    checkBrakeAndAcceleration(noseAngle);
+    if (initializing) {
+      setTimeout(() => setInitializing(false), 1000); // Ignore the first 1 second of data
+    } else {
+      checkBrakeAndAcceleration(noseAngle);
 
-    if (angle > 0 && angle !== 180) {
-      if (angle > maxLeanAngleRight) {
-        setMaxLeanAngleRight(angle);
-      }
-    } else if (angle < 0) {
-      if (angle < maxLeanAngleLeft) {
-        setMaxLeanAngleLeft(angle);
+      if (angle > 0 && angle !== 180) {
+        if (angle > maxLeanAngleRight) {
+          setMaxLeanAngleRight(angle);
+        }
+      } else if (angle < 0) {
+        if (angle < maxLeanAngleLeft) {
+          setMaxLeanAngleLeft(angle);
+        }
       }
     }
   }, [tiltData]);
@@ -71,7 +76,8 @@ const RideScreen = () => {
     });
     navigation.navigate("RideSummary", {
       maxLeanAngleLeft: maxLeanAngleLeft === -Infinity ? 0 : maxLeanAngleLeft,
-      maxLeanAngleRight: maxLeanAngleRight === -Infinity ? 0 : maxLeanAngleRight,
+      maxLeanAngleRight:
+        maxLeanAngleRight === -Infinity ? 0 : maxLeanAngleRight,
       brakeCount,
       accelerationCount,
     });
@@ -80,36 +86,36 @@ const RideScreen = () => {
 
   const checkBrakeAndAcceleration = (noseAngle) => {
     const brakeThreshold = 10;
-    const accelerationThreshold = -10;
+    const accelerationThreshold = -11;
 
     if (noseAngle > brakeThreshold) {
-        if (!brakeThresholdCrossed) {
-            console.log("Je hebt nu hard geremd");
-            setBrakeCount((prevCount) => prevCount + 1);
-            setBrakeThresholdCrossed(true);
-        }
+      if (!brakeThresholdCrossed) {
+        console.log("You have braked hard");
+        setBrakeCount((prevCount) => prevCount + 1);
+        setBrakeThresholdCrossed(true);
+      }
     } else {
-        setBrakeThresholdCrossed(false);
+      setBrakeThresholdCrossed(false);
     }
 
     if (noseAngle < accelerationThreshold) {
-        if (!accelerationThresholdCrossed) {
-            console.log("Je hebt hard geaccelereerd");
-            setAccelerationCount((prevCount) => prevCount + 1);
-            setAccelerationThresholdCrossed(true);
-        }
+      if (!accelerationThresholdCrossed) {
+        console.log("You have accelerated hard");
+        setAccelerationCount((prevCount) => prevCount + 1);
+        setAccelerationThresholdCrossed(true);
+      }
     } else {
-        setAccelerationThresholdCrossed(false);
+      setAccelerationThresholdCrossed(false);
     }
-};
-
+  };
 
   return (
     <View style={styles.rideScreen}>
       <View style={styles.screenContent}>
         <Text style={styles.screenTitle}>Ride Started...</Text>
         <Text style={styles.screenDiscription}>
-          We're currently analyzing your ride to provide you with valuable feedback once it's complete. Enjoy the journey!
+          We're currently analyzing your ride to provide you with valuable
+          feedback once it's complete. Enjoy the journey!
         </Text>
         <TouchableOpacity style={styles.stopButton} onPress={stopRide}>
           <Text style={styles.stopButtonText}>Stop the ride</Text>
