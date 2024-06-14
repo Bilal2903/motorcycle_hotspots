@@ -10,8 +10,7 @@ const RideScreen = () => {
   const [maxLeanAngleRight, setMaxLeanAngleRight] = useState(0);
 
   const [brakeThresholdCrossed, setBrakeThresholdCrossed] = useState(false);
-  const [accelerationThresholdCrossed, setAccelerationThresholdCrossed] =
-    useState(false);
+  const [accelerationThresholdCrossed, setAccelerationThresholdCrossed] = useState(false);
   const [brakeCount, setBrakeCount] = useState(0);
   const [accelerationCount, setAccelerationCount] = useState(0);
   const [initializing, setInitializing] = useState(true);
